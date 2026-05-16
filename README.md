@@ -24,19 +24,20 @@ Bartender4's source.
 2. **Bartender4 bars 2 & 7–11 (incl. Class Bars) fixed** — buttons are keyed
    by Bartender4's *global* `BT4Button{slot}` name instead of a colliding
    per-bar index.
-3. **Bartender4 stance override bindings resolve** — fixes a
-   `BT4StanceButton901`-vs-`1` index mismatch.
-4. **Renamed Bartender4 builds detected** — detection also keys off the
+3. **Renamed Bartender4 builds detected** — detection also keys off the
    `_G.Bartender4` global, so forks/rebrands are recognised.
-5. **All bound keys read** — up to 4 `GetBindingKey` results, not just the
+4. **All bound keys read** — up to 4 `GetBindingKey` results, not just the
    first; key type-guarded.
-6. **"Prefer Mouse / Modifier Binding"** — optional toggle in
+5. **"Prefer Mouse / Modifier Binding"** — optional toggle in
    *Keybind → Advanced* (default on): show the mouse-wheel / mouse-button /
    `Alt`·`Ctrl`·`Shift`·`Meta` key actually used to cast, rather than a
    leftover plain key. Turn it off for the original first-bound-key behaviour.
 
 A bar-addon override-binding priority change is also included and is
-discussed (with its trade-off) in upstream issue #20.
+discussed (with its trade-off) in upstream issue #20. Additional findings
+reported in #20 (Bartender4 stance override mismatch; a global leak; a
+`Core.lua` typo) are **not** patched in this fork — they are upstream-only
+suggestions in that issue.
 
 ## Install
 
