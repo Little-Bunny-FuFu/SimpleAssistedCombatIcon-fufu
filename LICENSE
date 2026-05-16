@@ -1,0 +1,38 @@
+SimpleAssistedCombatIcon-fufu — Attribution & Licensing Notice
+=============================================================
+
+This project ("the Fork") is a personal, derivative fork of
+SimpleAssistedCombatIcon ("the Original") by Katur239:
+
+    https://github.com/katur239/SimpleAssistedCombatIcon
+
+ORIGINAL WORK
+-------------
+Copyright (c) Katur239. All rights to the Original remain with its author.
+
+The upstream project does not publish an explicit software license. The
+Original's code is therefore redistributed here in good faith — substantially
+unmodified except for the targeted fixes described in the README — solely to
+share and validate bug fixes that have been reported back upstream
+(https://github.com/katur239/SimpleAssistedCombatIcon/issues/20).
+
+No ownership of, and no license over, the Original is claimed or granted by
+this repository. This is not a relicensing of the Original. At the original
+author's request, this repository (or any portion of it) will be amended,
+made private, or removed.
+
+FORK MODIFICATIONS
+------------------
+The changes introduced by this fork (commits authored by Little-Bunny-FuFu;
+the `-- fufu:` annotated hunks and the SimpleAssistedCombatIcon-fufu
+packaging) are offered back to Katur239 and the community freely, under
+whatever license the Original adopts, or — absent one — for unrestricted use
+by the original author. They carry no additional restrictions.
+
+NO WARRANTY
+-----------
+This software is provided "AS IS", without warranty of any kind, express or
+implied. Use at your own risk.
+
+If you are Katur239 and would like anything here changed or taken down,
+please open an issue at the fork repository or contact fufu@fufutopia.com.
