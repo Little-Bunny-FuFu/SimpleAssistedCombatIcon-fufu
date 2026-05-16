@@ -112,22 +112,25 @@ local function GetBindingForAction(action)
     if not action then return end
 
     -- fufu: GetBindingKey returns up to 4 keys (the original captured only the
-    -- first). With "Prefer Mouse-Wheel / Modifier" enabled (default; toggle in
-    -- Keybind -> Advanced), a mouse-wheel or Alt/Ctrl/Shift/Meta combo wins
-    -- over a plain key (it is the key actually used to cast). When disabled,
-    -- the first renderable key is returned (read across all slots).
+    -- first). With "Prefer Mouse / Modifier" enabled (default; toggle in
+    -- Keybind -> Advanced), a mouse-wheel, mouse button, or
+    -- Alt/Ctrl/Shift/Meta combo wins over a plain keyboard key (it is the key
+    -- actually used to cast). When disabled, the first renderable key is
+    -- returned (read across all slots). The type(key)=="string" guard also
+    -- protects LKB:ToShortKey, which does key:upper() internally.
     local keys = { GetBindingKey(action) }
     local preferMod = not addon.db or addon.db.profile.Keybind.preferModifierBind
     local fallback
     for i = 1, #keys do
         local key = keys[i]
-        local text = LKB:ToShortKey(key)
+        local text = type(key) == "string" and LKB:ToShortKey(key)
         if text then
             if not preferMod then
                 return text
             end
             local upper = key:upper()
             if upper:find("MOUSEWHEEL", 1, true)
+            or upper:match("^BUTTON%d")
             or upper:find("ALT-", 1, true)
             or upper:find("CTRL-", 1, true)
             or upper:find("SHIFT-", 1, true)

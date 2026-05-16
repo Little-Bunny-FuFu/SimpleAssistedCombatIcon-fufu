@@ -998,8 +998,8 @@ function addon:SetupOptions()
                     },
                     preferModifierBind = {
                         type = "toggle",
-                        name = "Prefer Mouse-Wheel / Modifier Binding",
-                        desc = "When a button has both a plain key and a mouse-wheel or Alt/Ctrl/Shift/Meta binding, show the mouse-wheel / modifier one (the key actually used to cast).\n\nWhen off, the first bound key is shown instead.",
+                        name = "Prefer Mouse / Modifier Binding",
+                        desc = "When a button has both a plain keyboard key and a mouse-wheel, mouse button, or Alt/Ctrl/Shift/Meta binding, show the mouse / modifier one (the key actually used to cast).\n\nWhen off, the first bound key is shown instead.",
                         get = function() return addon.db.profile.Keybind.preferModifierBind end,
                         set = function(_, val)
                             addon.db.profile.Keybind.preferModifierBind = val
