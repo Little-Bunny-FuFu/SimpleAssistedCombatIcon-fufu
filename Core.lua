@@ -88,6 +88,7 @@ local defaults = {
             X = -4,
             Y = -4,
             ConsolePort = false,
+            preferModifierBind = true,
             overrides = {},
         }
     }
@@ -994,6 +995,18 @@ function addon:SetupOptions()
                                 width = 1.2,
                             },
                         },
+                    },
+                    preferModifierBind = {
+                        type = "toggle",
+                        name = "Prefer Mouse-Wheel / Modifier Binding",
+                        desc = "When a button has both a plain key and a mouse-wheel or Alt/Ctrl/Shift/Meta binding, show the mouse-wheel / modifier one (the key actually used to cast).\n\nWhen off, the first bound key is shown instead.",
+                        get = function() return addon.db.profile.Keybind.preferModifierBind end,
+                        set = function(_, val)
+                            addon.db.profile.Keybind.preferModifierBind = val
+                            AssistedCombatIconFrame:ApplyOptions()
+                        end,
+                        order = 1.5,
+                        width = 1.5,
                     },
                     ConsolePort = {
                         type = "toggle",
