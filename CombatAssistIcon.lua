@@ -6,6 +6,7 @@ local GetTime           = GetTime
 local GetActionInfo     = GetActionInfo
 local GetBindingKey     = GetBindingKey
 local GetBindingText    = GetBindingText
+local GetMacroSpell     = GetMacroSpell
 local InCombatLockdown  = InCombatLockdown
 local UnitCanAttack     = UnitCanAttack
 local UnitIsDead        = UnitIsDead
@@ -89,9 +90,18 @@ local function GetSpellIDFromActionID(action)
 
     local actionType, id, subType = GetActionInfo(action)
 
-    if (actionType == "macro" and subType == "spell")
-    or (actionType == "spell" and subType ~= "assistedcombat")
-    then
+    if actionType == "macro" then
+        if subType == "spell" then
+            return id
+        else
+            -- fufu: conditional / multi-spell macro (subType ~= "spell").
+            -- Here GetActionInfo's id is the macro index, NOT a spell id, so
+            -- the original code returned nil and the macro never resolved.
+            -- Resolve what the macro currently casts, matching Blizzard's
+            -- AssistedCombatManager and LibActionButton:GetSpellId.
+            return (GetMacroSpell(id))
+        end
+    elseif actionType == "spell" and subType ~= "assistedcombat" then
         return id
     end
 
@@ -101,12 +111,14 @@ end
 local function GetBindingForAction(action)
     if not action then return end
 
-    local key = GetBindingKey(action)
-    if not key then return end
-
-    local text = LKB:ToShortKey(key)
-
-    if text then return text end
+    -- fufu: GetBindingKey returns up to 4 keys. The original captured only the
+    -- first, so a binding living in slot 2-4 (common with mouse-wheel and
+    -- modifier combos) was missed entirely. Return the first renderable key.
+    local keys = { GetBindingKey(action) }
+    for i = 1, #keys do
+        local text = LKB:ToShortKey(keys[i])
+        if text then return text end
+    end
 end
 
 local function GetButtonsForSpellID(spellID)
@@ -182,11 +194,17 @@ local function GetKeyBindForSpellID(spellID)
     if not buttons then return end
 
     for _,buttonName in ipairs(buttons) do
-        local buttonAction = BindingByButton[buttonName]
-        local text = GetBindingForAction(buttonAction)
-        if not text and OverrideBindingByButton then 
-            buttonAction = OverrideBindingByButton[buttonName]
-            text = GetBindingForAction(buttonAction)
+        -- fufu: prefer the bar addon's own per-button keybind (e.g. Bartender4
+        -- "CLICK BT4Button%d:Keybind") over the stock "ACTIONBUTTON%d" binding.
+        -- When a bar addon owns the bar its override binding is authoritative;
+        -- the stock binding is frequently stale and was being returned instead
+        -- (e.g. "Alt-F" shown for a button actually bound to mouse-wheel).
+        local text
+        if OverrideBindingByButton then
+            text = GetBindingForAction(OverrideBindingByButton[buttonName])
+        end
+        if not text then
+            text = GetBindingForAction(BindingByButton[buttonName])
         end
 
         if text then return text end
