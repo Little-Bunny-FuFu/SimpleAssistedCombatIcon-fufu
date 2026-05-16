@@ -284,7 +284,13 @@ local function LoadActionSlotMap()
         local E = unpack(ElvUI)
         HasElvUI = E and E.private and E.private.actionbar and E.private.actionbar.enable or false
     end
-    if C_AddOns.IsAddOnLoaded("Bartender4") then HasBartender = true end
+    -- fufu: detect Bartender4 by its global table, not just the "Bartender4"
+    -- addon name. The Bartender4-fufu fork (and any renamed BT4 build) loads
+    -- under a different addon name but still creates _G.Bartender4 and
+    -- BT4Button* frames with CLICK BT4Button%d:Keybind bindings. The stock
+    -- name-only check missed the fork, so SACI fell back to the default-UI
+    -- mapping and read stale Blizzard multibar bindings instead.
+    if _G.Bartender4 or C_AddOns.IsAddOnLoaded("Bartender4") then HasBartender = true end
     if C_AddOns.IsAddOnLoaded("Dominos") then HasDominos = true end
     
     if ( (HasElvUI and HasBartender) or (HasElvUI and HasDominos) or (HasBartender and HasDominos) ) and addon.db.profile.Keybind.show then
