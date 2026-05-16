@@ -377,17 +377,17 @@ local function LoadActionSlotMap()
 
     elseif HasBartender then
         local Bartender4ActionSlotMap = {
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 1,  last = 12}, --Bar 1 
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 13, last = 24}, --Bar 2
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 1,  last = 12}, --Bar 1 
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 13, last = 24}, --Bar 2
             { actionPrefix = "MULTIACTIONBAR3BUTTON", buttonPrefix ="BT4Button",  start = 25, last = 36}, --Bar 3
             { actionPrefix = "MULTIACTIONBAR4BUTTON", buttonPrefix ="BT4Button",  start = 37, last = 48}, --Bar 4 
             { actionPrefix = "MULTIACTIONBAR2BUTTON", buttonPrefix ="BT4Button",  start = 49, last = 60}, --Bar 5 
             { actionPrefix = "MULTIACTIONBAR1BUTTON", buttonPrefix ="BT4Button",  start = 61, last = 72}, --Bar 6
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 73, last = 84}, --Bar 7
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 85, last = 96}, --Bar 8
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 97, last = 108},--Bar 9
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 109,last = 120},--Bar 10
-            { actionPrefix = "ACTIONBUTTON",id= true, buttonPrefix ="BT4Button",  start = 121,last = 132},--Bar 11
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 73, last = 84}, --Bar 7
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 85, last = 96}, --Bar 8
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 97, last = 108},--Bar 9
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 109,last = 120},--Bar 10
+            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 121,last = 132},--Bar 11
             { actionPrefix = "MULTIACTIONBAR5BUTTON", buttonPrefix ="BT4Button",  start = 145,last = 156},--Bar 13
             { actionPrefix = "MULTIACTIONBAR6BUTTON", buttonPrefix ="BT4Button",  start = 157,last = 168},--Bar 14
             { actionPrefix = "MULTIACTIONBAR7BUTTON", buttonPrefix ="BT4Button",  start = 169,last = 180},--Bar 15
@@ -402,6 +402,13 @@ local function LoadActionSlotMap()
         for _, info in ipairs(Bartender4ActionSlotMap) do
             for slot = info.start, info.last do
                 local id = slot - info.start + 1
+                -- fufu: Bartender4 names its action buttons globally as
+                -- BT4Button{slot} (1..180). The stock map set id=true on the
+                -- ACTIONBUTTON bars (1/2/7-11), forcing a per-bar 1..12 name,
+                -- so bars 2 & 7-11 collided onto BT4Button1..12 (Bar 2 btn 1
+                -- leaked Bar 1 btn 1's binding). id=true now remains only on
+                -- the stance entry (BT4StanceButton is per-bar numbered); the
+                -- per-bar `id` is still used for the binding-action suffix.
                 local index = info.id and id or slot
                 local buttonName = info.buttonPrefix .. index
 
