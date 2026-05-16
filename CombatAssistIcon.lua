@@ -111,14 +111,28 @@ end
 local function GetBindingForAction(action)
     if not action then return end
 
-    -- fufu: GetBindingKey returns up to 4 keys. The original captured only the
-    -- first, so a binding living in slot 2-4 (common with mouse-wheel and
-    -- modifier combos) was missed entirely. Return the first renderable key.
+    -- fufu: GetBindingKey returns up to 4 keys (the original captured only the
+    -- first). When a button has both a plain key and a mouse-wheel / modifier
+    -- (Alt/Ctrl/Shift/Meta) combo, the combo is the one actually used to cast,
+    -- so prefer it; otherwise fall back to the first renderable plain key.
     local keys = { GetBindingKey(action) }
+    local fallback
     for i = 1, #keys do
-        local text = LKB:ToShortKey(keys[i])
-        if text then return text end
+        local key = keys[i]
+        local text = LKB:ToShortKey(key)
+        if text then
+            local upper = key:upper()
+            if upper:find("MOUSEWHEEL", 1, true)
+            or upper:find("ALT-", 1, true)
+            or upper:find("CTRL-", 1, true)
+            or upper:find("SHIFT-", 1, true)
+            or upper:find("META-", 1, true) then
+                return text
+            end
+            fallback = fallback or text
+        end
     end
+    return fallback
 end
 
 local function GetButtonsForSpellID(spellID)
