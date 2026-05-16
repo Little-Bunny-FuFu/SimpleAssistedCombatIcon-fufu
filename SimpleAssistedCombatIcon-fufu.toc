@@ -1,0 +1,22 @@
+## Interface: 120001,120005
+## OptionalDeps: Ace3, LibSharedMedia-3.0
+## IconTexture: Interface/Icons/ui_spellbook_onebutton.blp
+## Category: Combat
+## Title: Simple Assisted Combat Icon (fufu)
+## Notes: SimpleAssistedCombatIcon fork with corrected keybind resolution for Bartender4/Dominos/ElvUI and conditional macros. Based on Katur239's SimpleAssistedCombatIcon.
+## Author: Little-Bunny-FuFu (fork of Katur239)
+## Version: 12.0.1.12-fufu
+## X-Email: fufu@fufutopia.com
+## X-Website: https://github.com/Little-Bunny-FuFu/SimpleAssistedCombatIcon-fufu
+## X-License: All rights reserved.
+## SavedVariables: SCAIDB
+
+Libs\LibStub\LibStub.lua
+Libs\LibSharedMedia.xml
+Libs\Ace3.xml
+Libs\LibKeyBound-1.0\lib.xml
+Libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
+Libs\libdatabroker-1-1\LibDataBroker-1.1.lua
+
+Core.lua
+CombatAssistIcon.xml
