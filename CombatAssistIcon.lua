@@ -94,11 +94,17 @@ local function GetSpellIDFromActionID(action)
         if subType == "spell" then
             return id
         else
-            -- fufu: conditional / multi-spell macro (subType ~= "spell").
-            -- Here GetActionInfo's id is the macro index, NOT a spell id, so
-            -- the original code returned nil and the macro never resolved.
-            -- Resolve what the macro currently casts, matching Blizzard's
-            -- AssistedCombatManager and LibActionButton:GetSpellId.
+            -- fufu: conditional / multi-spell macro (subType ~= "spell"):
+            -- id is the macro index, not a spell id. Mirrors
+            -- LibActionButton-1.0:GetSpellId and Blizzard's
+            -- AssistedCombatManager; kept as defensive parity.
+            -- NOTE (verified in-game 2026-05-18): empirically INERT on
+            -- retail 12.0. GetActionInfo auto-resolves any macro that
+            -- currently casts a determinable spell to subType=="spell"
+            -- (tested: #showtooltip / no-#showtooltip conditional /
+            -- castsequence), so this branch is not reached for realistic
+            -- rotation macros. Harmless, not a user-visible fix. Upstream
+            -- issue #20 finding #1 withdrawn (conceded to maintainer).
             return (GetMacroSpell(id))
         end
     elseif actionType == "spell" and subType ~= "assistedcombat" then
