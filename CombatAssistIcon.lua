@@ -439,7 +439,11 @@ local function LoadActionSlotMap()
         for _, info in ipairs(Bartender4OverrideSlotMap) do
             for slot = info.start, info.last do
                 local id = slot - info.start + 1
-                local index = slot < 900 and id or slot
+                -- fufu: the stance row starts at 901, so using `slot` there
+                -- registered nonexistent BT4StanceButton901+ names; the per-bar
+                -- `id` gives BT4StanceButton1..N. Action rows are unaffected
+                -- (their single row starts at 1, so id == slot).
+                local index = id
                 local buttonName = info.buttonPrefix..index
                 
                 OverrideBindingByButton[buttonName] = info.actionPattern:format(info.buttonPrefix, index)
@@ -697,6 +701,14 @@ function AssistedCombatIconMixin:OnEvent(event, ...)
         local arg1, arg2 = ...
         if arg1 =="assistedCombatIconUpdateRate" then
             self.updateInterval = tonumber(arg2) or self.updateInterval
+            -- fufu: NewTicker latches its period at creation, so the new rate
+            -- was silently ignored until the next Stop/Start. Recreate the
+            -- running ticker directly (Stop() would also hide the icon).
+            if self.ticker then
+                self.ticker:Cancel()
+                self.ticker = nil
+                self:Start()
+            end
         end
     end
 end
@@ -762,8 +774,13 @@ function AssistedCombatIconMixin:UpdateVisibility()
 
     local parentFrame = db.position.parentFrame
 
-    if parentFrame == "__nameplate" then 
-        local nameplate = C_NamePlate.GetNamePlateForUnit("target")
+    -- fufu: `nameplate` hoisted out of the block below. The reads at the two
+    -- SetVisible calls resolved to the (nil) GLOBAL, so the icon could never
+    -- show with a nameplate anchor + any conditional display mode.
+    local nameplate
+
+    if parentFrame == "__nameplate" then
+        nameplate = C_NamePlate.GetNamePlateForUnit("target")
         if not UnitCanAttack("player","target") or not nameplate then
             SafeSetShown(self, false)
             return
@@ -1066,8 +1083,8 @@ function AssistedCombatIconMixin:Debug()
         ("\n|cff4cc9f0 | Enabled:|r %s\n|cff4cc9f0 | Health:|r %s\n|cff4cc9f0 | Current Spell:|r %s\n|cff4cc9f0 | Next Spell:|r %s\n|cff4cc9f0 | Last Tick:|r %s\n|cff4cc9f0 | Current Time:|r %s"):format(
         self.db.enabled and "Yes" or "No!",
         self:IsTickerStalled() and "BAD!!" or "Good!",
-        string.format("%d", self.spellID),
-        string.format("%d", nextSpell),
-        string.format("%d", self.lastTickTime),
+        tostring(self.spellID), -- fufu: %d raised on these three nilable values
+        tostring(nextSpell), -- fufu: GetNextCastSpell return is Nilable=true
+        tostring(self.lastTickTime), -- fufu: nil until the first tick
         string.format("%d", GetTime())))
 end

@@ -202,7 +202,9 @@ function addon:NormalizeDisplayOptions(key, val)
         return
     end
 
-    if key ~= "ALWAYS" and k ~= "ONLY_ALL_CONDITIONS" and val then
+    -- fufu: was `k` (an out-of-scope loop local, i.e. the nil global), which
+    -- made the ONLY_ALL_CONDITIONS exclusion inert.
+    if key ~= "ALWAYS" and key ~= "ONLY_ALL_CONDITIONS" and val then
         display.ALWAYS = false
         return
     end
@@ -1296,7 +1298,9 @@ function addon:SetupOptions()
             GameTooltip:Show()
         end,
         OnLeave = function(frame)
-            if frame ~= self then return end
+            -- fufu: dropped the `frame ~= self` guard -- `self` here was the
+            -- addon object (enclosing method upvalue), never the LDB display
+            -- frame, so the guard always returned and Hide() was unreachable.
             GameTooltip:Hide()
         end
     })
@@ -1356,6 +1360,14 @@ function addon:SlashCommand(input)
         end
     elseif input =="toggle" then
         self.db.profile.enabled = not self.db.profile.enabled
+        -- fufu: mirror the options setter -- without Start()/Stop() the flag
+        -- flipped but the ticker was never created/cancelled, so enabling via
+        -- slash left the icon dead until options were touched.
+        if self.db.profile.enabled then
+            AssistedCombatIconFrame:Start()
+        else
+            AssistedCombatIconFrame:Stop()
+        end
         DEFAULT_CHAT_FRAME:AddMessage(
             PREFIX .. (self.db.profile.enabled and "Enabled" or "Disabled")
         )
