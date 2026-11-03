@@ -5,7 +5,7 @@
 ## Title: Simple Assisted Combat Icon (fufu)
 ## Notes: SimpleAssistedCombatIcon fork with corrected keybind resolution for Bartender4/Dominos/ElvUI and conditional macros. Based on Katur239's SimpleAssistedCombatIcon.
 ## Author: Little-Bunny-FuFu (fork of Katur239)
-## Version: 12.0.1.12-fufu
+## Version: 12.0.7.1-fufu
 ## X-Email: fufu@fufutopia.com
 ## X-Website: https://github.com/Little-Bunny-FuFu/SimpleAssistedCombatIcon-fufu
 ## X-License: All rights reserved.

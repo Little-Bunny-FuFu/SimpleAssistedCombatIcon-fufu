@@ -208,7 +208,7 @@ local function GetKeyBindForSpellID(spellID)
     if override then return override end
     
     if ConsolePort and addon.db.profile.Keybind.ConsolePort then
-        slots = C_ActionBar.FindSpellActionButtons(spellID)
+        local slots = C_ActionBar.FindSpellActionButtons(spellID)
         if slots then 
             for _, slot in ipairs(slots) do
                 local bindingID = ConsolePort:GetActionBinding(slot)
@@ -308,7 +308,7 @@ local function LoadRotationalSpells()
 end
 
 local function LoadActionSlotMap()
-    if C_AddOns.IsAddOnLoaded("ElvUI") then
+    if C_AddOns.IsAddOnLoaded("ElvUI") or _G.ElvUI then
         local E = unpack(ElvUI)
         HasElvUI = E and E.private and E.private.actionbar and E.private.actionbar.enable or false
     end
