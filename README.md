@@ -18,9 +18,9 @@ Each change is tagged with a `-- fufu:` comment and was verified against
 Blizzard's `Blizzard_ActionBar` source, `LibActionButton-1.0`, and
 Bartender4's source.
 
-1. **Conditional / multi-spell macros now show a keybind** — adds a
-   `GetMacroSpell` fallback when a macro's `GetActionInfo` `subType` isn't
-   `"spell"` (previously such macros resolved to nothing).
+1. **Macro spell fallback** — adds a `GetMacroSpell` fallback when a macro's
+   `GetActionInfo` `subType` isn't `"spell"`. Defensive only: in-game testing
+   showed the game already resolves such macros, so nothing visible changes.
 2. **Bartender4 bars 2 & 7–11 (incl. Class Bars) fixed** — buttons are keyed
    by Bartender4's *global* `BT4Button{slot}` name instead of a colliding
    per-bar index.
@@ -34,10 +34,9 @@ Bartender4's source.
    leftover plain key. Turn it off for the original first-bound-key behaviour.
 
 A bar-addon override-binding priority change is also included and is
-discussed (with its trade-off) in upstream issue #20. Additional findings
-reported in #20 (Bartender4 stance override mismatch; a global leak; a
-`Core.lua` typo) are **not** patched in this fork — they are upstream-only
-suggestions in that issue.
+discussed (with its trade-off) in upstream issue #20. Two more findings
+reported in #20 are also patched here: the Bartender4 stance override
+mismatch and a `Core.lua` typo.
 
 ## Install
 
@@ -47,7 +46,7 @@ Copy the `SimpleAssistedCombatIcon-fufu` folder into
 > **Do not** run this alongside the original SimpleAssistedCombatIcon — both
 > use the `SCAIDB` saved variable and will conflict. Enable one or the other.
 
-Retail only (Interface 120001 / 120005). Settings carry over from the
+Retail only (Interface 120001 through 120100). Settings carry over from the
 original (same saved variable).
 
 ## Credits & license

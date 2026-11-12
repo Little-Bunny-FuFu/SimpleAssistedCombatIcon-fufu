@@ -269,16 +269,30 @@ local function OnActionSlotChanged(slot)
     end
 end
 
+-- fufu: LibActionButton fires this for every button on a bulk update (about 180 in one
+-- frame). Collect the names and flush once, instead of a timer and closure per button.
+local pendingButtons, flushScheduled = {}, false
+local function FlushPendingButtons()
+    flushScheduled = false
+    for buttonName in pairs(pendingButtons) do
+        pendingButtons[buttonName] = nil
+        local button = _G[buttonName]
+        if button then AddButtonToSlot(buttonName, button.action) end
+        UpdateButtonSpellID(buttonName)
+    end
+end
+
 local function OnActionChanged(self, button, action, ...)
     if not button then return end
 
     local buttonName = button:GetName()
     if not buttonName then return end
 
-    C_Timer.After(0, function() 
-        AddButtonToSlot(buttonName, button.action)
-        UpdateButtonSpellID(buttonName)
-    end)
+    pendingButtons[buttonName] = true
+    if not flushScheduled then
+        flushScheduled = true
+        C_Timer.After(0, FlushPendingButtons)
+    end
 end
 
 local function OnSpellsChanged()
@@ -392,7 +406,9 @@ local function LoadActionSlotMap()
     elseif HasBartender then
         local Bartender4ActionSlotMap = {
             { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 1,  last = 12}, --Bar 1 
-            { actionPrefix = "ACTIONBUTTON", buttonPrefix ="BT4Button",  start = 13, last = 24}, --Bar 2
+            -- fufu: no stock row for Bar 2 (slots 13-24). Bartender4 gives that bar no stock
+            -- binding, and the old ACTIONBUTTON row showed Bar 1's key for a Bar 2 spell.
+            -- The override map below still covers BT4Button13..24.
             { actionPrefix = "MULTIACTIONBAR3BUTTON", buttonPrefix ="BT4Button",  start = 25, last = 36}, --Bar 3
             { actionPrefix = "MULTIACTIONBAR4BUTTON", buttonPrefix ="BT4Button",  start = 37, last = 48}, --Bar 4 
             { actionPrefix = "MULTIACTIONBAR2BUTTON", buttonPrefix ="BT4Button",  start = 49, last = 60}, --Bar 5 
@@ -675,6 +691,8 @@ function AssistedCombatIconMixin:OnEvent(event, ...)
             self:Update()
         end
     elseif (event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "ROLE_CHANGED_INFORM") and self.db.display.HideAsHealer then
+        -- fufu: this branch shadows the PLAYER_SPECIALIZATION_CHANGED branch below
+        if event == "PLAYER_SPECIALIZATION_CHANGED" then LoadRotationalSpells() end
         self:UpdateVisibility()
         self:Update()
     elseif (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and self.db.display.HideInVehicle then
@@ -723,7 +741,7 @@ function AssistedCombatIconMixin:Start()
 end
 
 function AssistedCombatIconMixin:Stop()
-    SafeSetShown(self,false)
+    self:Hide() -- fufu: SafeSetShown keeps the frame shown in fade mode; disabled must hide
     addon:UpdateBroker()
     if not self.ticker then return end
 
@@ -768,7 +786,7 @@ function AssistedCombatIconMixin:UpdateVisibility()
     local display = db.display
     
     if not db.enabled then
-        SafeSetShown(self, false)
+        self:Hide() -- fufu: see Stop()
         return 
     end
 
@@ -1023,8 +1041,10 @@ function AssistedCombatIconMixin:OnDragStop()
     position.parent = "UIParent"
     position.parentFrame = "UIParent"
     position.relativePoint = relativePoint
-    position.X = math.floor(xOfs+0.5)
-    position.Y = math.floor(yOfs+0.5)
+    -- fufu: GetPoint is in the frame's scaled units; UpdateAnchorPoint divides by scale
+    local scale = self.db.icon.scale
+    position.X = math.floor(xOfs * scale + 0.5)
+    position.Y = math.floor(yOfs * scale + 0.5)
         
     if ACD.OpenFrames[addonName] then
         ACR:NotifyChange(addonName)

@@ -3,7 +3,7 @@
 ## IconTexture: Interface/Icons/ui_spellbook_onebutton.blp
 ## Category: Combat
 ## Title: Simple Assisted Combat Icon (fufu)
-## Notes: SimpleAssistedCombatIcon fork with corrected keybind resolution for Bartender4/Dominos/ElvUI and conditional macros. Based on Katur239's SimpleAssistedCombatIcon.
+## Notes: SimpleAssistedCombatIcon fork with corrected keybind resolution for Bartender4/Dominos/ElvUI. Based on Katur239's SimpleAssistedCombatIcon.
 ## Author: Little-Bunny-FuFu (fork of Katur239)
 ## Version: 12.0.7.1-fufu
 ## X-Email: fufu@fufutopia.com
